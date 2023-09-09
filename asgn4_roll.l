@@ -1,96 +1,94 @@
+
 %{
     #include "y.tab.h"
     #include <stdio.h>
     #include <stdlib.h>
-    int lineCount = 1;
+    int linecount = 1;
 %}
 
-%x MULTI_LINE_COMMENT_BODY
-%x SINGLE_LINE_COMMENT_BODY
+%x multi_line_comment
+%x single_line_comment
 
 ESCAPE_SEQUENCE         "\\\'"|"\\\""|"\\?"|"\\\\"|"\\a"|"\\b"|"\\f"|"\\n"|"\\r"|"\\t"|"\\v"
-
 IDENTIFIER              [A-Za-z_][A-Za-z0-9_]*
-
 DIGIT                   [0-9]
 DIGIT_SEQUENCE          {DIGIT}+
 NONZERO_DIGIT           [1-9]
 INTEGER_CONSTANT        {NONZERO_DIGIT}{DIGIT}*|"0"
-
 EXPONENT_PART           [eE]([+-]?){DIGIT_SEQUENCE}
 FRACTIONAL_CONSTANT     {DIGIT_SEQUENCE}?\.{DIGIT_SEQUENCE}|{DIGIT_SEQUENCE}\.
 FLOATING_CONSTANT       {FRACTIONAL_CONSTANT}({EXPONENT_PART}?)|{DIGIT_SEQUENCE}{EXPONENT_PART}
-
 ENUMERATION_CONSTANT    {IDENTIFIER}
-
 C_CHAR                  [^\'\n\\]|{ESCAPE_SEQUENCE}
 C_CHAR_SEQUENCE         {C_CHAR}+
 CHARACTER_CONSTANT      \'{C_CHAR_SEQUENCE}\'
-
 S_CHAR                  [^\"\n\\]|{ESCAPE_SEQUENCE}
 S_CHAR_SEQUENCE         {S_CHAR}+
 STRING_LITERAL          \"({S_CHAR_SEQUENCE}?)\"
-
 WHITESPACE              [ \t]
 NEWLINE                 \n
 
+
+
 %%
 
-"auto"                          { return AUTO; }
-"break"                         { return BREAK; }
-"case"                          { return CASE; }
-"char"                          { return CHAR; }
-"const"                         { return CONST; }
-"continue"                      { return CONTINUE; }
+"auto"                           { return AUTO; }
+"break"                           { return BREAK; }
+"case"                           { return CASE; }
+"char"                           { return CHAR; }
+"const"                          { return CONST; }
+"continue"                       { return CONTINUE; }
 "default"                       { return DEFAULT; }
-"do"                            { return DO; }
+"do"                             { return DO; }
 "double"                        { return DOUBLE; }
 "else"                          { return ELSE; }
-"enum"                          { return ENUM; }
+"enum"                            { return ENUM; }
 "extern"                        { return EXTERN; }
-"float"                         { return FLOAT; }
-"for"                           { return FOR; }
+"float"                          { return FLOAT; }
+"for"                             { return FOR; }
 "goto"                          { return GOTO; }
 "if"                            { return IF; }
-"inline"                        { return INLINE; }
+"inline"                         { return INLINE; }
 "int"                           { return INT; }
-"long"                          { return LONG; }
+"long"                           { return LONG; }
 "register"                      { return REGISTER; }
-"restrict"                      { return RESTRICT; }
+"restrict"                       { return RESTRICT; }
 "return"                        { return RETURN; }
 "short"                         { return SHORT; }
-"signed"                        { return SIGNED; }
-"sizeof"                        { return SIZEOF; }
-"static"                        { return STATIC; }
+"signed"                         { return SIGNED; }
+"sizeof"                          { return SIZEOF; }
+"static"                         { return STATIC; }
 "struct"                        { return STRUCT; }
-"switch"                        { return SWITCH; }
+"switch"                         { return SWITCH; }
 "typedef"                       { return TYPEDEF; }
-"union"                         { return UNION; }
+"union"                          { return UNION; }
 "unsigned"                      { return UNSIGNED; }
-"void"                          { return VOID; }
-"volatile"                      { return VOLATILE; }
+"void"                           { return VOID; }
+"volatile"                       { return VOLATILE; }
 "while"                         { return WHILE; }
 "_Bool"                         { return _BOOL; }
-"_Complex"                      { return _COMPLEX; }
-"_Imaginary"                    { return _IMAGINARY; }
+"_Complex"                       { return _COMPLEX; }
+"_Imaginary"                    { return _IMAGINARY;    }
 
-{IDENTIFIER}                    { yylval.identifierVal = strdup(yytext); return IDENTIFIER; }
+
+
+{IDENTIFIER}                    { yylval.stringVal = strdup(yytext); return IDENTIFIER; }
 {INTEGER_CONSTANT}              { yylval.intVal = atoi(yytext); return INTEGER_CONSTANT; }
 {FLOATING_CONSTANT}             { yylval.floatVal = atof(yytext); return FLOATING_CONSTANT; }
 {CHARACTER_CONSTANT}            { yylval.charVal = strdup(yytext); return CHARACTER_CONSTANT; }
 {STRING_LITERAL}                { yylval.stringVal = strdup(yytext); return STRING_LITERAL; }
 
-"["                             { return LEFT_SQUARE_BRACKET; }
-"++"                            { return INCREMENT; }
-"/"                             { return SLASH; }
-"?"                             { return QUESTION_MARK; }
-"="                             { return ASSIGNMENT; }
-","                             { return COMMA; }
+"["                             { return LEFT_SQUARE_BRACKET;           }
+"++"                            { return INCREMENT;         }
+"/"                             { return SLASH;     }
+"?"                             { return QUESTION_MARK;             }
+"="                             { return ASSIGNMENT;        }
+","                             { return COMMA;         }
 "]"                             { return RIGHT_SQUARE_BRACKET; }
-"("                             { return LEFT_PARENTHESES; }
-"{"                             { return LEFT_CURLY_BRACKET; }
-"}"                             { return RIGHT_CURLY_BRACKET; }
-"."                             { return DOT; }
+"("                             { return LEFT_PARENTHESES;  }
+"{"                             { return LEFT_CURLY_BRACKET;    }
+"}"                             { return RIGHT_CURLY_BRACKET;   }
+"."                             { return DOT;  }
 "->"                            { return ARROW; }
 "*"                             { return ASTERISK; }
 "+"                             { return PLUS; }
@@ -126,19 +124,22 @@ NEWLINE                 \n
 "!="                            { return NOT_EQUALS; }
 "&="                            { return BITWISE_AND_ASSIGNMENT; }
 "|="                            { return BITWISE_OR_ASSIGNMENT; }
-"^="                            { return BITWISE_XOR_ASSIGNMENT; }
+"^="                            { return BITWISE_XOR_ASSIGNMENT;  }
+"/*"                            { BEGIN(multi_line_comment); }
 
-"/*"                            { BEGIN(MULTI_LINE_COMMENT_BODY); }
-<MULTI_LINE_COMMENT_BODY>"*/"   { BEGIN(INITIAL); }
-<MULTI_LINE_COMMENT_BODY>.      { }
-<MULTI_LINE_COMMENT_BODY>"\n"   { lineCount++; printf("\n-------------------- Line No. %d  --------------------\n\n", lineCount); }
 
-"//"                            { BEGIN(SINGLE_LINE_COMMENT_BODY); }
-<SINGLE_LINE_COMMENT_BODY>"\n"  { BEGIN(INITIAL); lineCount++; printf("\n-------------------- Line No. %d  --------------------\n\n", lineCount); }
-<SINGLE_LINE_COMMENT_BODY>.     { }
+
+<multi_line_comment>"*/"   { BEGIN(INITIAL); }
+<multi_line_comment>.      { }
+<multi_line_comment>"\n"   { linecount++; printf("\n++++++++ line no. %d  ++++++++\n", linecount); }
+
+"//"                            { BEGIN(single_line_comment); }
+<single_line_comment>"\n"  { BEGIN(INITIAL); linecount++; printf("\n++++++++ line no. %d  ++++++++\n", linecount); }
+<single_line_comment>.     { }
+
 
 {WHITESPACE}                    { }
-{NEWLINE}                       { lineCount++; printf("\n-------------------- Line No. %d  --------------------\n\n", lineCount); }
-.                               { printf("ERROR [Line %d] : Invalid token %s\n", lineCount, yytext); return INVALID_TOKEN; }
+{NEWLINE}                       { linecount++; printf("\n++++++++ line no. %d  ++++++++\n", linecount); }
+.                               { printf("error [line %d] : Invalid token %s\n", linecount, yytext); return INVALID_TOKEN; }
 
 %%
