@@ -1,8 +1,8 @@
 %{
     #include "y.tab.h"
-    int lineCount = 1;
     #include <stdio.h>
     #include <stdlib.h>
+    int lineCount = 1;
 %}
 
 %x MULTI_LINE_COMMENT_BODY
@@ -131,14 +131,14 @@ NEWLINE                 \n
 "/*"                            { BEGIN(MULTI_LINE_COMMENT_BODY); }
 <MULTI_LINE_COMMENT_BODY>"*/"   { BEGIN(INITIAL); }
 <MULTI_LINE_COMMENT_BODY>.      { }
-<MULTI_LINE_COMMENT_BODY>"\n"   { lineCount++; printf("\n-------------------- Parsing Line No. %d  --------------------\n\n", lineCount); }
+<MULTI_LINE_COMMENT_BODY>"\n"   { lineCount++; printf("\n-------------------- Line No. %d  --------------------\n\n", lineCount); }
 
 "//"                            { BEGIN(SINGLE_LINE_COMMENT_BODY); }
-<SINGLE_LINE_COMMENT_BODY>"\n"  { BEGIN(INITIAL); lineCount++; printf("\n-------------------- Parsing Line No. %d  --------------------\n\n", lineCount); }
+<SINGLE_LINE_COMMENT_BODY>"\n"  { BEGIN(INITIAL); lineCount++; printf("\n-------------------- Line No. %d  --------------------\n\n", lineCount); }
 <SINGLE_LINE_COMMENT_BODY>.     { }
 
 {WHITESPACE}                    { }
-{NEWLINE}                       { lineCount++; printf("\n-------------------- Parsing Line No. %d  --------------------\n\n", lineCount); }
+{NEWLINE}                       { lineCount++; printf("\n-------------------- Line No. %d  --------------------\n\n", lineCount); }
 .                               { printf("ERROR [Line %d] : Invalid token %s\n", lineCount, yytext); return INVALID_TOKEN; }
 
 %%
