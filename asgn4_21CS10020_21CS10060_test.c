@@ -2,28 +2,28 @@
 //  Simma Pavan Kumar -> 21CS10060
 //  Choda Y B V Anjaneya -> 21CS10020
 
-inline void foo1(int *restrict p1, const int p2, volatile int p3, ...) {
+void func(int * f1, const int f2, volatile int f3, ...) {
     auto int a;
     register int b;
     extern int c;
     static int d = 4;
 }
 
-const char *foo2(int b[const static 8], int c[static 9], int d[], int e[const *]);
+const char *solve(int b[const static 8], int c[static 9], int d[], int e[const *]);
 
-enum e1;
-enum e2 { TAG1, TAG2 };
-enum { TAG3 = 0, TAG4 } e3;
+enum E1;
+enum E2 { T1, T2 };
+enum { T3 = 0, T4 } E3;
 
 signed main() {
     int a[6] = { 1, 2, [2]=3 };
-    char b[] = "Test string :)";
-    char c1 = 'c';
+    char b[] = "This is for testing";
+    char c1 = 's';
     char *c2 = &c1;
-    *c2 = 'a';
-    char **d = (char) { "a", b, "abc" };
+    *c2 = 'c';
+    char **d = (char) { "j", b, "pqr" };
 
-    unsigned long n1 = +123456789;
+    unsigned long n1 = +1239;
     short n2 = ~16;
     float n3 = -3.53;
     double n4 = 2.99e-2;
@@ -31,21 +31,21 @@ signed main() {
     double _Complex n6;
     double _Imaginary n7;
 
-    n1 = (int) c;
-    n1 = sizeof(int);
-    n1 = sizeof n1;
-
     n1 *= n1, n1 /= n1, n1 %= n1;
     n1 += (n1 -= n1);
     n1 <<= (n1 >>= n1);
     n1 &= n1 |= n1 ^= n1;
 
+    n1 = (int) c;
+    n1 = sizeof(int);
+    n1 = sizeof n1;
+
+   
     n1 = ( (n1==0 || n1==1) && n1!=n2 ) ? n1 = 0 : n2;
     a[n2] = n1;
 
-    RANDOM_LOC:
+    SOME_THING:
         if (n3 < n4) {
-
             switch (n2) {
                 case 0:
                     n2++;
@@ -63,7 +63,7 @@ signed main() {
         }
     
     while(n2--)
-        goto RANDOM_LOC;
+        goto   SOME_THING;
 
     for(;;)
     for(int i;;)
@@ -83,11 +83,10 @@ signed main() {
     t2 = t2>>2;
     t1 = t2 & t3 | t4 ^ t5;
 
-    foo1(1,2,3,4,5,6);
+    func(1,2,3,4,5,6);
 
-    /* . and -> test */
-    ms1.a = 3;
-    ms2->a = 4;
+    pavan.a = 3;
+    anji->a = 4;
 
     return 0;
 }
