@@ -1,5 +1,5 @@
-// Simma Pavan Kumar     21CS10060
-// Choda Y B V Anjaneya  21CS10020
+// Simma Pavan Kumar    -> 21CS10060
+// Choda Y B V Anjaneya -> 21CS10020
 #include <stdio.h>
 extern int yyparse();
 
